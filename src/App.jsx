@@ -5,7 +5,7 @@ import EditorSection from "./components/EditorSection";
 import { supabase } from "./supabaseClient";
 import TextOnImageEditor from "./components/TextUponImage";
 import DesignBlog from "./components/Blog";
-import CardGrid from "./components/cards";
+import CardGrid from "./components/Cards";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 const App = () => {
   const [session, setSession] = useState(null);
@@ -46,7 +46,7 @@ const App = () => {
               )
             } 
           />
-                <Route path="/Cards" element={<CardGrid />} />
+                <Route path="/cards" element={<CardGrid />} />
         <Route path="/textOnImage" element={<TextOnImageEditor />} />
         {/* <Route path="/textBorderImage" element={<TextBorderSubject />} /> */}
         <Route path="/blogs" element={<DesignBlog/>}/>
