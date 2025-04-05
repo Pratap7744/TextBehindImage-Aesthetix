@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import EditorNavbar from './EditorNavbar';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
@@ -7,7 +8,17 @@ import toi from "../images/football.png"
 const CardGrid = () => {
   // Get the navigate function from react-router
   const navigate = useNavigate();
-
+  // In your CardGrid component
+useEffect(() => {
+  // Check if we're coming from a redirect
+  const handleRedirectResult = async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) console.error("Error getting session:", error);
+    // You can do something with the session data here if needed
+  };
+  
+  handleRedirectResult();
+}, []);
   // Sample card data - replace with your actual data
   const cards = [
     {

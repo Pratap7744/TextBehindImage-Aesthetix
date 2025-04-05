@@ -11,10 +11,17 @@ const HomeSection = ({ session }) => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   
   const signInWithGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: window.location.origin + "/cards" },
-    });
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { 
+          redirectTo: window.location.origin + "/cards",
+          // Make sure this is the exact Vercel URL
+        },
+      });
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
   };
 
   const handleGetStartedClick = () => {
