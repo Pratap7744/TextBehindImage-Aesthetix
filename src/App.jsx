@@ -46,7 +46,7 @@ const App = () => {
               )
             } 
           />
-                <Route path="/cards" element={<CardGrid />} />
+                <Route path="/cards" element={<CardGrid session={session} />} />
         <Route path="/textOnImage" element={<TextOnImageEditor />} />
         {/* <Route path="/textBorderImage" element={<TextBorderSubject />} /> */}
         <Route path="/blogs" element={<DesignBlog/>}/>
