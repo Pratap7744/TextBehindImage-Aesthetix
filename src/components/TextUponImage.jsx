@@ -13,6 +13,7 @@ const TextUponImage = ({ session }) => {
   const [fontColor, setFontColor] = useState("#ffffff");
   const [fontFamily, setFontFamily] = useState("Impact");
   const [loading, setLoading] = useState(false);
+  const [processing, setProcessing] = useState(false); // New processing state
   const [modelLoading, setModelLoading] = useState(true);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -120,9 +121,15 @@ const TextUponImage = ({ session }) => {
 
   useEffect(() => {
     if (imageUrl && !loading) {
-      updatePreview(imageUrl, imageSize);
+      handleUpdatePreview();
     }
   }, [text, fontSize, fontColor, fontFamily, textPosition, outlineWidth, subjectMask]);
+
+  const handleUpdatePreview = async () => {
+    setProcessing(true);
+    await updatePreview(imageUrl, imageSize);
+    setProcessing(false);
+  };
 
   const updatePreview = async (imgUrl, imgSize) => {
     if (!imgUrl || !text) return;
@@ -316,8 +323,25 @@ const TextUponImage = ({ session }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-7xl flex flex-col lg:flex-row gap-4"
+      className="w-full max-w-7xl flex flex-col lg:flex-row gap-4 relative"
     >
+      {/* Processing Overlay */}
+      <AnimatePresence>
+        {processing && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50"
+          >
+            <div className="bg-white p-6 rounded-xl shadow-lg flex flex-col items-center">
+              <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-2" />
+              <p className="text-gray-700">Processing changes...</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Preview Box */}
       <div className="w-full lg:w-3/5">
         <div className="flex flex-col items-center">
@@ -330,7 +354,7 @@ const TextUponImage = ({ session }) => {
           {result && !loading && (
             <motion.a
               href={result}
-              download="text-upon-image.png"
+              download="TextBehindImage-Aesthetix.png"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="mt-4 w-full max-w-xs flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-indigo-600 to-purple-500 hover:from-indigo-700 hover:to-purple-600 text-white shadow-lg hover:shadow-xl"
@@ -351,6 +375,7 @@ const TextUponImage = ({ session }) => {
               whileTap={{ scale: 0.95 }}
               onClick={handleReset}
               className="w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all duration-300 text-gray-700"
+              disabled={processing} // Disable during processing
             >
               <Upload className="h-5 w-5" />
               Upload New Image
@@ -367,6 +392,7 @@ const TextUponImage = ({ session }) => {
                     onChange={(e) => setText(e.target.value)}
                     className="w-full p-3 bg-white rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 outline-none text-gray-800 transition-all duration-300"
                     placeholder="Enter your text"
+                    disabled={processing} // Disable during processing
                   />
                 </div>
                 <div>
@@ -375,6 +401,7 @@ const TextUponImage = ({ session }) => {
                     value={fontFamily}
                     onChange={(e) => setFontFamily(e.target.value)}
                     className="w-full p-3 bg-white rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 outline-none text-gray-800 transition-all duration-300"
+                    disabled={processing} // Disable during processing
                   >
                     {fontFamilies.map((font) => (
                       <option
@@ -398,6 +425,7 @@ const TextUponImage = ({ session }) => {
                     value={fontSize}
                     onChange={(e) => setFontSize(parseInt(e.target.value))}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500 transition-all duration-300"
+                    disabled={processing} // Disable during processing
                   />
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>20px</span>
@@ -412,12 +440,14 @@ const TextUponImage = ({ session }) => {
                       value={fontColor}
                       onChange={(e) => setFontColor(e.target.value)}
                       className="h-10 w-12 rounded-lg border border-gray-300 cursor-pointer transition-all duration-300 hover:ring-2 hover:ring-indigo-300"
+                      disabled={processing} // Disable during processing
                     />
                     <input
                       type="text"
                       value={fontColor}
                       onChange={(e) => setFontColor(e.target.value)}
                       className="flex-1 p-3 bg-white rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 outline-none text-gray-800 transition-all duration-300"
+                      disabled={processing} // Disable during processing
                     />
                   </div>
                 </div>
@@ -432,6 +462,7 @@ const TextUponImage = ({ session }) => {
                     value={textPosition.x}
                     onChange={(e) => setTextPosition({ ...textPosition, x: parseInt(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500 transition-all duration-300"
+                    disabled={processing} // Disable during processing
                   />
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>Left</span>
@@ -449,6 +480,7 @@ const TextUponImage = ({ session }) => {
                     value={textPosition.y}
                     onChange={(e) => setTextPosition({ ...textPosition, y: parseInt(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500 transition-all duration-300"
+                    disabled={processing} // Disable during processing
                   />
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>Top</span>
@@ -466,6 +498,7 @@ const TextUponImage = ({ session }) => {
                     value={outlineWidth}
                     onChange={(e) => setOutlineWidth(parseInt(e.target.value))}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-500 transition-all duration-300"
+                    disabled={processing} // Disable during processing
                   />
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>0px</span>
